@@ -8,6 +8,7 @@ import math
 def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
     return df
+
 def formatted_percent_input(label, min_val, max_val, default_val, step=0.1):
     col1, col2 = st.sidebar.columns([4, 1])
     val = col1.number_input(label, min_value=min_val, max_value=max_val, value=default_val, step=step, format="%.1f")
@@ -22,9 +23,9 @@ def get_user_inputs(index_names):
     pr_start = formatted_percent_input("Starting FIA Participation Rate", 0.0, 100.0, 100.0)
     pr_end = formatted_percent_input("Ending FIA Participation Rate", 0.0, 100.0, 35.0)
     floor = formatted_percent_input("FIA Floor Rate", 0.0, 10.0, 0.0)
-    fee = formatted_percent_input("401(k) Annual Fee Rate", 0.0, 5.0, 2.0)
-    inflation = formatted_percent_input("Annual Inflation Rate", 0.0, 10.0, 3.0)
-    tax = formatted_percent_input("Tax Rate on RMDs", 0.0, 50.0, 30.0)
+    fee = formatted_percent_input("401(k) Annual Fee Rate", 0.0, 10.0, 2.0)
+    inflation = formatted_percent_input("Annual Inflation Rate", 0.0, 99.0, 3.0)
+    tax = formatted_percent_input("Tax Rate on RMDs", 0.0, 100.0, 20.0) 
     return index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax
 
 def compound_growth(start, returns):
