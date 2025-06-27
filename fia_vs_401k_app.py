@@ -85,7 +85,7 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     })
 
     st.write("### Simulation Results - ",index_choice)
-    st.dataframe(df.style.format({
+    st.dataframe(df.reset_index(drop=True).style.format({
         "FIA Start Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
