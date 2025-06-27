@@ -85,7 +85,8 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     })
 
     st.write("### Simulation Results - ",index_choice)
-    st.dataframe(df.reset_index(drop=True).style.format({
+    st.dataframe(
+    df.style.format({
         "FIA Start Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
@@ -94,7 +95,10 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
-    }))
+    }),
+    use_container_width=True,
+    hide_index=True
+)
 
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
