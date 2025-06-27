@@ -10,9 +10,9 @@ def load_combined_returns():
     return df
 
 # User input section
-def get_user_inputs(index_names):
+def get_user_inputs(index_values):
     st.sidebar.header("Simulation Inputs")
-    index_choice = st.sidebar.selectbox("Index Reference Input", index_names)
+    index_name = st.sidebar.selectbox("Index Reference Input", combined_df['Index'])
     ptp_interval = st.sidebar.selectbox("Point to Point", [1, 2], index=0, help="Interval in years over which returns are calculated.")
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
     premium = st.sidebar.number_input("Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
@@ -24,7 +24,7 @@ def get_user_inputs(index_names):
     fee = st.sidebar.number_input("401(k) Annual Fee (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1) / 100
     inflation = st.sidebar.number_input("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=3.0, step=0.1) / 100
     tax = st.sidebar.number_input("Tax Rate on RMDs (%)", min_value=0.0, max_value=50.0, value=30.0, step=1.0) / 100
-    return index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation, tax
+    return index_name, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation, tax
 
 # Growth compounding
 def compound_growth(start, returns):
@@ -140,8 +140,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
 # App runner
 if __name__ == "__main__":
     combined_df = load_combined_returns()
-    index_names = combined_df['Index'].unique().tolist()
-    inputs = get_user_inputs(index_names)
-
+    inputs = (, combined_df)
+   
     if st.button("Run Simulation", key="run_button"):
-        run_simulation(*inputs, combined_df)
+        run_simulation(inputs)
