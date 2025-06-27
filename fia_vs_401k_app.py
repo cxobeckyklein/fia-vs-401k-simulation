@@ -78,7 +78,7 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
 
     if st.button("Run Simulation", key="run_simulation_button"):
-            st.subheader(f"Simulation Results - {index_choice}")
+            st.subheader("Simulation Results - {index_choice}")
 
     # [Simulation logic here]
     df = pd.DataFrame({
