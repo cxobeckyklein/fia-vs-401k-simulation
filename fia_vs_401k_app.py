@@ -61,7 +61,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
 # Simulation logic
 def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate, combined_df):
     st.header("Simulation Results")
-    st.markdown(f"<div style='font-size: 20px; margin-top: -10px; color: grey;'>Index Reference – {index_choice}</div>- {ptp_interval}</div>-Year Point to Point", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size: 20px; margin-top: -10px; color: grey;'>Index Reference {index_choice} - {ptp_interval}-Year Point to Point</div>", unsafe_allow_html=True)
   
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
