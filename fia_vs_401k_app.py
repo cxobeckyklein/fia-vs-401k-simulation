@@ -31,12 +31,13 @@ def compound_growth(start, returns):
 
 def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     rmd_divisors = {
-        age: div for age, div in zip(range(73, 95), [
-            26.5, 25.5, 24.6, 23.7, 22.9, 22.0, 21.1, 20.2,
-            19.4, 18.5, 17.7, 16.8, 16.0, 15.2, 14.4, 13.7,
-            12.9, 12.2, 11.5, 10.8, 10.1, 9.5
-        ])
-    }
+    age: div for age, div in zip(range(73, 105), [
+        26.5, 25.5, 24.6, 23.7, 22.9, 22.0, 21.1, 20.2,
+        19.4, 18.5, 17.7, 16.8, 16.0, 15.2, 14.4, 13.7,
+        12.9, 12.2, 11.5, 10.8, 10.1, 9.5, 8.9, 8.4,
+        7.8, 7.3, 6.8, 6.4, 6.0, 5.6, 5.2, 4.9
+    ])
+}
     start_bal, rmd, net_rmd, infl_adj_rmd = [], [], [], []
     infl_factor = 1.0
     for i, age in enumerate(ages):
@@ -53,18 +54,18 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
 def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax, combined_df):
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
-    repeat_factor = math.ceil(40 / len(selected_returns))
-    returns_40yr = (selected_returns * repeat_factor)[:40]
+    repeat_factor = math.ceil(len(ages) / len(selected_returns))
+    returns_extended = (selected_returns * repeat_factor)[:len(ages)]
 
-    pr_decay = np.linspace(pr_start, pr_end, 40)
-    fia_returns = np.maximum(floor, pr_decay * np.array(returns_40yr))
-    k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_40yr]
+    pr_decay = np.linspace(pr_start, pr_end, len(ages))
+    fia_returns = np.maximum(floor, pr_decay * np.array(selected_returns))
+    k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
 
     fia_bal = compound_growth(premium, fia_returns)
     k401_bal = compound_growth(premium, k401_returns)
 
-    ages = list(range(start_age, start_age + 40))
-    years = list(range(1, 41))
+    ages = list(range(start_age, 105))  # assuming start_age is a user input
+    years = list(range(1, len(ages) + 1))
 
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax, inflation)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax, inflation)
