@@ -20,7 +20,7 @@ def get_user_inputs(index_names):
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=85, value=55, step=1)
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
-    pr_start = formatted_percent_input("Starting FIA Participation Rate", 0.0, 100.0, 100.0)
+    pr_start = formatted_percent_input("Starting FIA Participation Rate", 0.0, 1000.0, 100.0)
     pr_end = formatted_percent_input("Ending FIA Participation Rate", 0.0, 100.0, 35.0)
     floor = formatted_percent_input("FIA Floor Rate", 0.0, 10.0, 0.0)
     fee = formatted_percent_input("401(k) Annual Fee Rate", 0.0, 10.0, 2.0)
