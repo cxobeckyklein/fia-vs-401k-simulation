@@ -93,7 +93,13 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
         caps = np.random.uniform(0.03, 0.15, size=len(ages))
 
     # FIA and 401k returns
-    fia_returns = [max(floor, min(pr * r, cap) - spread) for pr, r, cap in zip(pr_decay, returns_extended, caps)]
+    fia_returns = []
+    for pr, r, cap in zip(pr_decay, returns_extended, caps):
+        raw_return = pr * r
+        capped_return = min(raw_return, cap)
+        adjusted_return = max(floor, capped_return - spread)
+        fia_returns.append(adjusted_return)
+    
     k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
 
     fia_bal = compound_growth(premium, fia_returns)
