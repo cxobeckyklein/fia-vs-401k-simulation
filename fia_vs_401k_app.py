@@ -101,8 +101,17 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         "401k Infl-Adj RMD": "${:,.0f}"
     }))
 
-    csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
+# Format the DataFrame for CSV export
+df_export = df.copy()
+for col in df_export.columns:
+    if "Balance" in col or "RMD" in col:
+        df_export[col] = df_export[col].apply(lambda x: f"${x:,.0f}")
+    elif "Rate" in col:
+        df_export[col] = df_export[col].apply(lambda x: f"{x*100:.1f}%")
+
+# Export to CSV
+csv = df_export.to_csv(index=False).encode('utf-8')
+st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
 
 # ===== Streamlit App Entry Point =====
 st.title("FIA vs 401(k) Comparison Tool")
