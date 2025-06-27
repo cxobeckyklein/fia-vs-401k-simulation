@@ -12,7 +12,7 @@ def load_combined_returns():
 def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
-    start_age = st.sidebar.number_input("Starting Age", min_value=50, max_value=80, value=55, step=1)
+    start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
     pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0.0, 1.0, 1.0, 0.01)
     pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0.0, 1.0, 0.35, 0.01)
