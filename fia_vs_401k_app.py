@@ -7,7 +7,7 @@ import math
 @st.cache_data
 def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
-    st.write(combined_df.head())
+    st.write(df.head())  # Corrected from 'combined_df' to 'df'
     return df
 
 # User input section
