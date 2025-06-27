@@ -55,7 +55,10 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate, combined_df):
-    st.subheader(f"Simulation Results - {index_choice}")
+    if st.button("Run Simulation", key="run_sim_button"):
+        st.subheader(f"Simulation Results - {index_choice}")
+        # simulation logic here...
+
 
     # Get returns for selected index
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
@@ -122,5 +125,4 @@ index_names = combined_df['Index'].unique().tolist()
 
 inputs = get_user_inputs(index_names)
 
-if st.button("Run Simulation"):
-    run_simulation(*inputs, combined_df)
+run_simulation(*inputs, combined_df)
