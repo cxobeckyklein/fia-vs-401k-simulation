@@ -71,6 +71,8 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax, inflation)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax, inflation)
 
+    # ... build and display the dataframe
+
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
