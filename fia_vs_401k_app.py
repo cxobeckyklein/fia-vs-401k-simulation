@@ -58,7 +58,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 # Simulation logic
-def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate):
+def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate, combined_df):
     st.header("Simulation Results")
     st.markdown(f"<div style='font-size: 20px; margin-top: -10px; color: grey;'>Index Reference {index_choice} | {ptp_interval}-Year Point to Point</div>", unsafe_allow_html=True)
   
@@ -68,10 +68,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     ages = list(range(start_age, 105))
     years = list(range(1, len(ages) + 1))
 
-    repeat_factor = math.ceil(len(ages) / len(selected_returns))
-    returns_extended = (selected_returns * repeat_factor)[:len(ages)]
-
-    # Apply point-to-point interval logic
+       # Apply point-to-point interval logic
     returns_ptp = []
     for i in range(0, len(selected_returns) - ptp_interval + 1):
         cumulative_return = np.prod([(1 + r) for r in selected_returns[i:i + ptp_interval]]) - 1
@@ -82,7 +79,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     returns_extended = (returns_ptp * repeat_factor)[:len(ages)]   
     
     # Participation rates
-    pr_decay = np.linspace(pr_start, pr_end, len(ages)),
+    pr_decay = np.linspace(pr_start, pr_end, len(ages))
 
     # Caps: user-defined or randomized
     if cap_input > 0:
@@ -93,7 +90,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
 
     # FIA and 401k returns
     fia_returns = []
-    for pr, r, cap in zip(pr_decay, returns_extended, caps):
+    for pr, r, cap_val in zip(pr_decay, returns_extended, caps):
         raw_return = pr * r
         capped_return = min(raw_return, cap)
         adjusted_return = max(floor, capped_return - spread)
