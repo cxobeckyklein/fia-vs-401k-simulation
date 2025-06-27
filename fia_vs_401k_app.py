@@ -50,14 +50,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 def run_simulation():
-    st.title("FIA vs 401(k) Comparison Tool")
-
-    combined_df = load_combined_returns()
-    index_names = combined_df['Index'].unique().tolist()
-
-    index_choice, premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate = get_user_inputs(index_names)
-
-    selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
+    if st.button("Run Simulation"):
     st.write("### Annual Returns for Selected Index")
     st.dataframe(selected_data.style.format({"Return": "{:.2%}"}))
 
