@@ -14,12 +14,12 @@ def get_user_inputs(index_names):
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
-    pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0, 000, 100, 000)
-    pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0, 000, 35, 000)
-    floor = st.sidebar.number_input("FIA Floor Rate", 0, 000, 0, 000)
-    fee = st.sidebar.number_input("401(k) Annual Fee Rate", 0, 000, 2, 000)
-    inflation = st.sidebar.number_input("Annual Inflation Rate", 0, 000, 3, 000)
-    tax = st.sidebar.number_input("Tax Rate on RMDs", 0, 000, 20, 000)
+    pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0, 000, 100, 0)
+    pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0, 000, 35, 0)
+    floor = st.sidebar.number_input("FIA Floor Rate", 0, 000, 0, 0)
+    fee = st.sidebar.number_input("401(k) Annual Fee Rate", 0, 000, 2, 0)
+    inflation = st.sidebar.number_input("Annual Inflation Rate", 0, 000, 3, 0)
+    tax = st.sidebar.number_input("Tax Rate on RMDs", 0, 000, 20, 0)
     return index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax
 
 def compound_growth(start, returns):
