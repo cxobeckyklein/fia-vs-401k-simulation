@@ -13,13 +13,13 @@ def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
-    premium = st.sidebar.number_input("Enter Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
-    pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0.0, 1.0, 1.0, 0.01)
-    pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0.0, 1.0, 0.35, 0.01)
-    floor = st.sidebar.number_input("FIA Floor Rate", 0.0, 0.10, 0.0, 0.01)
-    fee = st.sidebar.number_input("401(k) Annual Fee", 0.0, 0.05, 0.02, 0.005)
-    inflation = st.sidebar.number_input("Annual Inflation Rate", 0.0, 0.1, 0.03, 0.005)
-    tax = st.sidebar.number_input("Tax Rate on RMDs", 0.0, 0.5, 0.30, 0.01)
+    premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
+    pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0, 000, 100, 0)
+    pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0, 000, 35, 0)
+    floor = st.sidebar.number_input("FIA Floor Rate", 0, 0, 0, 0)
+    fee = st.sidebar.number_input("401(k) Annual Fee Rate", 0, 000, 2, 0.005)
+    inflation = st.sidebar.number_input("Annual Inflation Rate", 0, 000, 3, 0)
+    tax = st.sidebar.number_input("Tax Rate on RMDs", 0, 000, 20, 0)
     return index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax
 
 def compound_growth(start, returns):
@@ -51,28 +51,33 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
         infl_factor *= (1 + inflation_rate)
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
-def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax, combined_df):
+def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate, combined_df):
+    st.header("FIA vs 401(k) Simulation Results")
+
+    # Get returns for selected index
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
 
+    # Extend returns to cover all ages (start_age to 104)
     ages = list(range(start_age, 105))
     years = list(range(1, len(ages) + 1))
-
     repeat_factor = math.ceil(len(ages) / len(selected_returns))
     returns_extended = (selected_returns * repeat_factor)[:len(ages)]
 
+    # Calculate FIA and 401(k) returns
     pr_decay = np.linspace(pr_start, pr_end, len(ages))
     fia_returns = np.maximum(floor, pr_decay * np.array(returns_extended))
     k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
 
+    # Grow balances
     fia_bal = compound_growth(premium, fia_returns)
     k401_bal = compound_growth(premium, k401_returns)
 
-    fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax, inflation)
-    k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax, inflation)
+    # Calculate RMDs
+    fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
+    k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
 
-    # ... build and display the dataframe
-
+    # Build results DataFrame
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
@@ -83,12 +88,11 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         "401k Start Balance": k401_start,
         "401k RMD": k401_rmd,
         "401k After-Tax RMD": k401_net,
-        "401k Infl-Adj RMD": k401_adj,
+        "401k Infl-Adj RMD": k401_adj
     })
 
-    st.write("### Simulation Results - ",index_choice)
-    st.dataframe(
-    df.style.format({
+    # Display results with formatting
+    st.dataframe(df.style.format({
         "FIA Start Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
@@ -97,13 +101,19 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
-    }),
-    use_container_width=True,
-    hide_index=True
-)
+    }))
 
-    csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
+    # Format export with % and $ values
+    export_df = df.copy()
+    export_df["FIA Participation Rate Start"] = f"{pr_start:.2f}%"
+    export_df["FIA Participation Rate End"] = f"{pr_end:.2f}%"
+    export_df["FIA Floor"] = f"{floor:.2f}%"
+    export_df["401(k) Fee"] = f"{fee:.2f}%"
+    export_df["Inflation"] = f"{inflation_rate:.2f}%"
+    export_df["Tax Rate"] = f"{tax_rate:.2f}%"
+
+    csv = export_df.to_csv(index=False).encode('utf-8')
+    st.download_button("Download Results as CSV", csv, "fia_vs_401k_results.csv", "text/csv")
 
 # ===== Streamlit App Entry Point =====
 st.title("FIA vs 401(k) Comparison Tool")
