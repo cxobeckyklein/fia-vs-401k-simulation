@@ -94,9 +94,9 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
 
     # FIA and 401k returns
     fia_returns = []
-    for pr, r, cap in zip(pr_decay, returns_extended, caps):
+    for pr, r, caps in zip(pr_decay, returns_extended, caps):
         raw_return = pr * r
-        capped_return = min(raw_return, cap)
+        capped_return = min(raw_return, caps)
         adjusted_return = max(floor, capped_return, spread)
         fia_returns.append(adjusted_return)
     
