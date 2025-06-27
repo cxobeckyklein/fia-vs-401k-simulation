@@ -98,5 +98,5 @@ def run_simulation():
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
 
-        if __name__ == "__main__":
+    if __name__ == "__main__":
         run_simulation()
