@@ -59,7 +59,6 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         st.subheader(f"Simulation Results - {index_choice}")
         # simulation logic here...
 
-
     # Get returns for selected index
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
@@ -79,9 +78,6 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
 
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
-
-    if st.button("Run Simulation", key="run_simulation_button"):
-        st.subheader("Simulation Results - {index_choice}")
 
     # [Simulation logic here]
     df = pd.DataFrame({
