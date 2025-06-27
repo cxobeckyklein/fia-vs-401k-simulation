@@ -7,7 +7,6 @@ import math
 @st.cache_data
 def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
-    # st.write(df.head())  # Corrected from 'combined_df' to 'df'
     return df
 
 # User input section
@@ -25,7 +24,7 @@ def get_user_inputs(index_names):
     fee = st.sidebar.number_input("401(k) Annual Fee (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1) / 100
     inflation = st.sidebar.number_input("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=3.0, step=0.1) / 100
     tax = st.sidebar.number_input("Tax Rate on RMDs (%)", min_value=0.0, max_value=50.0, value=30.0, step=1.0) / 100
-    return index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input,  floor, spread, fee, inflation, tax
+    return index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation, tax
 
 # Growth compounding
 def compound_growth(start, returns):
@@ -59,7 +58,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 # Simulation logic
-def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate, combined_df):
+def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate):
     st.header("Simulation Results")
     st.markdown(f"<div style='font-size: 20px; margin-top: -10px; color: grey;'>Index Reference {index_choice} | {ptp_interval}-Year Point to Point</div>", unsafe_allow_html=True)
   
