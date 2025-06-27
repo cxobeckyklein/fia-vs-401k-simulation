@@ -77,41 +77,42 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
 
+    if st.button("Run Simulation"):
+    st.subheader(f"Simulation Results - {index_choice}")
+
+    # [Simulation logic here]
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
-        "FIA Balance": fia_start,
+        "FIA Start Balance": fia_start,
         "FIA RMD": fia_rmd,
         "FIA After-Tax RMD": fia_net,
         "FIA Infl-Adj RMD": fia_adj,
-        "401k Balance": k401_start,
+        "401k Start Balance": k401_start,
         "401k RMD": k401_rmd,
         "401k After-Tax RMD": k401_net,
         "401k Infl-Adj RMD": k401_adj,
     })
 
     st.dataframe(df.style.format({
-        "FIA Balance": "${:,.0f}",
+        "FIA Start Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
         "FIA Infl-Adj RMD": "${:,.0f}",
-        "401k Balance": "${:,.0f}",
+        "401k Start Balance": "${:,.0f}",
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
     }))
 
-# Format the DataFrame for CSV export
-df_export = df.copy()
-for col in df_export.columns:
-    if "Balance" in col or "RMD" in col:
-        df_export[col] = df_export[col].apply(lambda x: f"${x:,.0f}")
-    elif "Rate" in col:
-        df_export[col] = df_export[col].apply(lambda x: f"{x*100:.1f}%")
+    df_export = df.copy()
+    for col in df_export.columns:
+        if any(term in col for term in ["Balance", "RMD"]):
+            df_export[col] = df_export[col].apply(lambda x: f"${x:,.0f}")
+        elif "Rate" in col:
+            df_export[col] = df_export[col].apply(lambda x: f"{x * 100:.1f}%")
+        # Leave "Year" and "Age" unformatted
 
-# Export to CSV
-csv = df_export.to_csv(index=False).encode('utf-8')
-st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
 
 # ===== Streamlit App Entry Point =====
 st.title("FIA vs 401(k) Comparison Tool")
