@@ -16,7 +16,7 @@ def get_user_inputs(index_names):
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
     pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0, 000, 100, 000)
     pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0, 000, 35, 000)
-    floor = st.sidebar.number_input("FIA Floor Rate", 0, 0, 0, 0)
+    floor = st.sidebar.number_input("FIA Floor Rate", 0, 000, 0, 000)
     fee = st.sidebar.number_input("401(k) Annual Fee Rate", 0, 000, 2, 000)
     inflation = st.sidebar.number_input("Annual Inflation Rate", 0, 000, 3, 000)
     tax = st.sidebar.number_input("Tax Rate on RMDs", 0, 000, 20, 000)
