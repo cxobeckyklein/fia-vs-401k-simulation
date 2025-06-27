@@ -144,4 +144,4 @@ if __name__ == "__main__":
     inputs = get_user_inputs(index_names)
 
     if st.button("Run Simulation", key="run_button"):
-        run_simulation(*inputs, combined_df)
+        run_simulation(inputs, combined_df)
