@@ -8,18 +8,23 @@ import math
 def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
     return df
+def formatted_percent_input(label, min_val, max_val, default_val, step=0.1):
+    col1, col2 = st.sidebar.columns([4, 1])
+    val = col1.number_input(label, min_value=min_val, max_value=max_val, value=default_val, step=step, format="%.1f")
+    col2.markdown("### %")
+    return val / 100  # Convert to decimal
 
 def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=85, value=55, step=1)
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
-    pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0, 0000, 100, 1)
-    pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0, 0000, 35, 1)
-    floor = st.sidebar.number_input("FIA Floor Rate", 0, 0000, 000, 1)
-    fee = st.sidebar.number_input("401(k) Annual Fee Rate", 0, 0000, 2, 1)
-    inflation = st.sidebar.number_input("Annual Inflation Rate", 0, 0000, 3, 1)
-    tax = st.sidebar.number_input("Tax Rate on RMDs", 0, 0000, 20, 1)
+    pr_start = formatted_percent_input("Starting FIA Participation Rate", 0.0, 100.0, 100.0)
+    pr_end = formatted_percent_input("Ending FIA Participation Rate", 0.0, 100.0, 35.0)
+    floor = formatted_percent_input("FIA Floor Rate", 0.0, 10.0, 0.0)
+    fee = formatted_percent_input("401(k) Annual Fee Rate", 0.0, 5.0, 2.0)
+    inflation = formatted_percent_input("Annual Inflation Rate", 0.0, 10.0, 3.0)
+    tax = formatted_percent_input("Tax Rate on RMDs", 0.0, 50.0, 30.0)
     return index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax
 
 def compound_growth(start, returns):
