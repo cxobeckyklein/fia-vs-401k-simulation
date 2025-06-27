@@ -97,7 +97,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     for pr, r, cap in zip(pr_decay, returns_extended, caps):
         raw_return = pr * r
         capped_return = min(raw_return, cap)
-        adjusted_return = max(floor, capped_return - spread)
+        adjusted_return = max(floor, capped_return, spread)
         fia_returns.append(adjusted_return)
     
     k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
