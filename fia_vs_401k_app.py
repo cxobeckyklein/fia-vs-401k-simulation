@@ -54,18 +54,14 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
 def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax, combined_df):
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
+
+    # Define age and year range first
+    ages = list(range(start_age, 105))  # Extended to age 104
+    years = list(range(1, len(ages) + 1))
+
+    # Extend returns to cover full age span
     repeat_factor = math.ceil(len(ages) / len(selected_returns))
     returns_extended = (selected_returns * repeat_factor)[:len(ages)]
-
-    pr_decay = np.linspace(pr_start, pr_end, len(ages))
-    fia_returns = np.maximum(floor, pr_decay * np.array(selected_returns))
-    k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
-
-    fia_bal = compound_growth(premium, fia_returns)
-    k401_bal = compound_growth(premium, k401_returns)
-
-    ages = list(range(start_age, 105))  # assuming start_age is a user input
-    years = list(range(1, len(ages) + 1))
 
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax, inflation)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax, inflation)
