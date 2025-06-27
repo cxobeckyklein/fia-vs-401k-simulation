@@ -84,14 +84,14 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
 
     st.write("### Simulation Results - ",index_choice)
     st.dataframe(df.style.format({
-        "FIA Balance": "${:,.0f}",
+        "FIA Start Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
         "FIA Infl-Adj RMD": "${:,.0f}",
-        "401k Balance": "${:,.0f}",
+        "401k Start Balance": "${:,.0f}",
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
-        "401k Infl-Adj RMD": "${:,.0f}",
+        "401k Infl-Adj RMD": "${:,.0f}"
     }))
 
     csv = df.to_csv(index=False).encode('utf-8')
