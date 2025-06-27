@@ -47,43 +47,59 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
         infl_factor *= (1 + inflation_rate)
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
-def run_simulation():
+
+def run_simulation(premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate):
+    ages = list(range(55, 95))
+    years = list(range(1, 41))
+
+    returns_40yr = sp500_returns_2003_2022 * 2
+    pr_decay = np.linspace(pr_start, pr_end, 40)
+    fia_returns = np.maximum(floor, pr_decay * np.array(returns_40yr))
+    k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_40yr]
+
+    fia_bal = compound_growth(premium, fia_returns)
+    k401_bal = compound_growth(premium, k401_returns)
+
+    fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
+    k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
+
+    df = pd.DataFrame({
+        "Year": years,
+        "Age": ages,
+        "FIA Start Balance": fia_start,
+        "FIA RMD": fia_rmd,
+        "FIA After-Tax RMD": fia_net,
+        "FIA Infl-Adj RMD": fia_adj,
+        "401k Start Balance": k401_start,
+        "401k RMD": k401_rmd,
+        "401k After-Tax RMD": k401_net,
+        "401k Infl-Adj RMD": k401_adj,
+    })
+
     st.title("FIA vs 401(k) Comparison Tool")
 
+    # Get user inputs outside the button to persist them
+    premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate = get_user_inputs()
+
+    # Only run calculations after button is clicked
     if st.button("Run Simulation"):
-        ages = list(range(55, 95))
-        years = list(range(1, 41))
-        premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate = get_user_inputs()
+        run_simulation(premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate) 
 
-        returns_40yr = sp500_returns_2003_2022 * 2
-        pr_decay = np.linspace(pr_start, pr_end, 40)
-        fia_returns = np.maximum(floor, pr_decay * np.array(returns_40yr))
-        k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_40yr]
+    if st.button("Reset"):
+        st.session_state.run_simulation = False
 
-        fia_bal = compound_growth(premium, fia_returns)
-        k401_bal = compound_growth(premium, k401_returns)
+    st.dataframe(
+    df.style.format({
+        "FIA Start Balance": "${:,.0f}",
+        "FIA RMD": "${:,.0f}",
+        "FIA After-Tax RMD": "${:,.0f}",
+        "FIA Infl-Adj RMD": "${:,.0f}",
+        "401k Start Balance": "${:,.0f}",
+        "401k RMD": "${:,.0f}",
+        "401k After-Tax RMD": "${:,.0f}",
+        "401k Infl-Adj RMD": "${:,.0f}"
+    })
+)
 
-        fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
-        k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
-
-        df = pd.DataFrame({
-            "Year": years,
-            "Age": ages,
-            "FIA Start Balance": fia_start,
-            "FIA RMD": fia_rmd,
-            "FIA After-Tax RMD": fia_net,
-            "FIA Infl-Adj RMD": fia_adj,
-            "401k Start Balance": k401_start,
-            "401k RMD": k401_rmd,
-            "401k After-Tax RMD": k401_net,
-            "401k Infl-Adj RMD": k401_adj,
-        })
-
-        st.dataframe(df.style.format("${:,.0f}"))
-
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
-
-# Execute the app
-if __name__ == "__main__":
-    run_simulation()
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
