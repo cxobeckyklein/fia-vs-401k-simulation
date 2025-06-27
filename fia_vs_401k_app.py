@@ -104,5 +104,4 @@ def run_simulation():
     st.download_button("Download CSV", csv, "fia_vs_401k_results.csv", "text/csv")
 
 if __name__ == "__main__":
-    run_simulation()
-    
+    run_simulation()   
