@@ -82,7 +82,7 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         "401k Infl-Adj RMD": k401_adj,
     })
 
-    st.write("### Simulation Results - "index_choice)
+    st.write("### Simulation Results - ",index_choice)
     st.dataframe(df.style.format({
         "FIA Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
