@@ -9,7 +9,7 @@ def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
     return df
 
-ddef get_user_inputs(index_names):
+def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=50, max_value=80, value=55, step=1)
