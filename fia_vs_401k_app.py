@@ -6,7 +6,7 @@ import math
 # Load combined index return dataset
 @st.cache_data
 def load_combined_returns():
-    df = pd.read_csv("index_returns_combined.csv")
+    df = pd.read_csv("sample_index_returns.csv")
     return df
 
 def get_user_inputs(index_names):
