@@ -9,9 +9,10 @@ def load_combined_returns():
     df = pd.read_csv("sample_index_returns.csv")
     return df
 
-def get_user_inputs(index_names):
+ddef get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
+    start_age = st.sidebar.number_input("Starting Age", min_value=50, max_value=80, value=55, step=1)
     premium = st.sidebar.number_input("Enter Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
     pr_start = st.sidebar.number_input("Starting FIA Participation Rate", 0.0, 1.0, 1.0, 0.01)
     pr_end = st.sidebar.number_input("Ending FIA Participation Rate", 0.0, 1.0, 0.35, 0.01)
@@ -19,7 +20,7 @@ def get_user_inputs(index_names):
     fee = st.sidebar.number_input("401(k) Annual Fee", 0.0, 0.05, 0.02, 0.005)
     inflation = st.sidebar.number_input("Annual Inflation Rate", 0.0, 0.1, 0.03, 0.005)
     tax = st.sidebar.number_input("Tax Rate on RMDs", 0.0, 0.5, 0.30, 0.01)
-    return index_choice, premium, pr_start, pr_end, floor, fee, inflation, tax
+    return index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax
 
 def compound_growth(start, returns):
     balances = [start]
@@ -49,7 +50,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
         infl_factor *= (1 + inflation_rate)
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
-def run_simulation(index_choice, premium, pr_start, pr_end, floor, fee, inflation, tax, combined_df):
+def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation, tax, combined_df):
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
     repeat_factor = math.ceil(40 / len(selected_returns))
@@ -62,7 +63,7 @@ def run_simulation(index_choice, premium, pr_start, pr_end, floor, fee, inflatio
     fia_bal = compound_growth(premium, fia_returns)
     k401_bal = compound_growth(premium, k401_returns)
 
-    ages = list(range(55, 95))
+    ages = list(range(start_age, start_age + 40))
     years = list(range(1, 41))
 
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax, inflation)
@@ -80,9 +81,6 @@ def run_simulation(index_choice, premium, pr_start, pr_end, floor, fee, inflatio
         "401k After-Tax RMD": k401_net,
         "401k Infl-Adj RMD": k401_adj,
     })
-
-    st.write("### Annual Returns for Selected Index")
-    st.dataframe(selected_data.style.format({"Return": "{:.2%}"}))
 
     st.write("### Simulation Results")
     st.dataframe(df.style.format({
