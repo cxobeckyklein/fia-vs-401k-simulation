@@ -63,10 +63,9 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
         repeat_factor = math.ceil(len(ages) / len(selected_returns))
         returns_extended = (selected_returns * repeat_factor)[:len(ages)]
 
-        pr_decay = np.linspace(pr_start, pr_end, len(ages))
-        fia_returns = np.maximum(floor, pr_decay * np.array(returns_extended))
-        k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
-
+        # Generate random participation rates from 10% to 400%
+        np.random.seed(42)  # Fixes the seed for reproducibility
+        pr_decay = np.random.uniform(0.1, 4.0, size=len(ages))
         fia_bal = compound_growth(premium, fia_returns)
         k401_bal = compound_growth(premium, k401_returns)
 
