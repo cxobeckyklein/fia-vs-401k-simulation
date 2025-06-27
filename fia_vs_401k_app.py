@@ -14,22 +14,18 @@ def load_combined_returns():
 def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
     index_choice = st.sidebar.selectbox("Index Reference Input", index_names)
+    ptp_interval = st.sidebar.selectbox("Point to Point", [1, 2], index=0, help="Interval in years over which returns are calculated.")
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
-
     premium = st.sidebar.number_input("Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
-
     pr_start = st.sidebar.number_input("Starting FIA PR (%)", min_value=0.0, max_value=400.0, value=100.0, step=1.0) / 100
     pr_end = st.sidebar.number_input("Ending FIA PR (%)", min_value=0.0, max_value=400.0, value=35.0, step=1.0) / 100
-
     cap_input = st.sidebar.number_input("Cap Rate (%) [0 = randomize]", min_value=0.0, max_value=50.0, value=0.0, step=0.1) / 100
     floor = st.sidebar.number_input("FIA Floor Rate (%)", min_value=0.0, max_value=10.0, value=0.0, step=0.1) / 100
     spread = st.sidebar.number_input("FIA Spread Rate (%)", min_value=0.0, max_value=5.0, value=0.0, step=0.1) / 100
-
     fee = st.sidebar.number_input("401(k) Annual Fee (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1) / 100
     inflation = st.sidebar.number_input("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=3.0, step=0.1) / 100
     tax = st.sidebar.number_input("Tax Rate on RMDs (%)", min_value=0.0, max_value=50.0, value=30.0, step=1.0) / 100
-
-    return index_choice, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation, tax
+    return index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input,  floor, spread, fee, inflation, tax
 
 # Growth compounding
 def compound_growth(start, returns):
@@ -63,10 +59,10 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 # Simulation logic
-def run_simulation(index_choice, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate, combined_df):
+def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation_rate, tax_rate, combined_df):
     st.header("Simulation Results")
-    st.markdown(f"<div style='font-size: 18px; margin-top: -10px; color: grey;', margin-bottom: +6px>Index Reference – {index_choice}</div>", unsafe_allow_html=True)
-
+    st.markdown(f"<div style='font-size: 20px; margin-top: -10px; color: grey;'>Index Reference – {index_choice}</div>- {ptp_interval}</div>-Year Point to Point", unsafe_allow_html=True)
+  
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
     selected_returns = selected_data['Return'].tolist()
 
@@ -76,8 +72,18 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, cap_input
     repeat_factor = math.ceil(len(ages) / len(selected_returns))
     returns_extended = (selected_returns * repeat_factor)[:len(ages)]
 
+    # Apply point-to-point interval logic
+    returns_ptp = []
+    for i in range(0, len(selected_returns) - ptp_interval + 1):
+        cumulative_return = np.prod([(1 + r) for r in selected_returns[i:i + ptp_interval]]) - 1
+        annualized_return = (1 + cumulative_return) ** (1 / ptp_interval) - 1
+        returns_ptp.append(annualized_return)
+
+    repeat_factor = math.ceil(len(ages) / len(returns_ptp))
+    returns_extended = (returns_ptp * repeat_factor)[:len(ages)]   
+    
     # Participation rates
-    pr_decay = np.linspace(pr_start, pr_end, len(ages))
+    pr_decay = np.linspace(pr_start, pr_end, len(ages)),
 
     # Caps: user-defined or randomized
     if cap_input > 0:
