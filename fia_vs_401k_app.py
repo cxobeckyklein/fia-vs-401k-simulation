@@ -11,17 +11,17 @@ def load_combined_returns():
 
 def formatted_percent_input(label, min_val, max_val, default_val, step=0.1):
     col1, col2 = st.sidebar.columns([4, 1])
-    val = col1.number_input(label, min_value=min_val, max_value=max_val, value=default_val, step=step, format="%.1f")
+    val = col1.number_input(label, min_value=min_val, max_value=max_val, value=default_val, step=step)
     col2.markdown("### %")
     return val / 100  # Convert to decimal
 
 def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
-    index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
+    index_choice = st.sidebar.selectbox("Index Benchmark", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=85, value=55, step=1)
-    premium = st.sidebar.number_input("Enter Starting Balance", min_value=0, value=1000000, step=1000)
-    pr_start = formatted_percent_input("Starting FIA Participation Rate", 0.0, 1000.0, 100.0)
-    pr_end = formatted_percent_input("Ending FIA Participation Rate", 0.0, 100.0, 35.0)
+    premium = st.sidebar.number_input("Starting Balance", min_value=0, value=1000000, step=1000)
+    pr_start = formatted_percent_input("Starting FIA PR", 0.0, 1000.0, 100.0)
+    pr_end = formatted_percent_input("Ending FIA PR", 0.0, 100.0, 35.0)
     floor = formatted_percent_input("FIA Floor Rate", 0.0, 10.0, 0.0)
     fee = formatted_percent_input("401(k) Annual Fee Rate", 0.0, 10.0, 2.0)
     inflation = formatted_percent_input("Annual Inflation Rate", 0.0, 99.0, 3.0)
@@ -58,7 +58,7 @@ def calculate_rmds(balances, ages, tax_rate, inflation_rate):
     return start_bal, rmd, net_rmd, infl_adj_rmd
 
 def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fee, inflation_rate, tax_rate, combined_df):
-    st.header("FIA vs 401(k) Simulation Results")
+    st.header("Simulation Results - "): index_names
 
     # Get returns for selected index
     selected_data = combined_df[combined_df['Index'] == index_choice][['Year', 'Return']]
@@ -87,11 +87,11 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
-        "FIA Start Balance": fia_start,
+        "FIA Balance": fia_start,
         "FIA RMD": fia_rmd,
         "FIA After-Tax RMD": fia_net,
         "FIA Infl-Adj RMD": fia_adj,
-        "401k Start Balance": k401_start,
+        "401k Balance": k401_start,
         "401k RMD": k401_rmd,
         "401k After-Tax RMD": k401_net,
         "401k Infl-Adj RMD": k401_adj
@@ -99,11 +99,11 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
 
     # Display results with formatting
     st.dataframe(df.style.format({
-        "FIA Start Balance": "${:,.0f}",
+        "FIA Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
         "FIA Infl-Adj RMD": "${:,.0f}",
-        "401k Start Balance": "${:,.0f}",
+        "401k Balance": "${:,.0f}",
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
@@ -111,8 +111,8 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, floor, fe
 
     # Format export with % and $ values
     export_df = df.copy()
-    export_df["FIA Participation Rate Start"] = f"{pr_start:.2f}%"
-    export_df["FIA Participation Rate End"] = f"{pr_end:.2f}%"
+    export_df["FIA PR Start"] = f"{pr_start:.2f}%"
+    export_df["FIA PR End"] = f"{pr_end:.2f}%"
     export_df["FIA Floor"] = f"{floor:.2f}%"
     export_df["401(k) Fee"] = f"{fee:.2f}%"
     export_df["Inflation"] = f"{inflation_rate:.2f}%"
