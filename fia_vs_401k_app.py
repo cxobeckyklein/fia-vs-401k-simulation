@@ -13,13 +13,13 @@ def load_combined_returns():
 # User input section
 def get_user_inputs(index_names):
     st.sidebar.header("Simulation Inputs")
-    index_choice = st.sidebar.selectbox("Choose Index Dataset", index_names)
+    index_choice = st.sidebar.selectbox("Index Reference Input", index_names)
     start_age = st.sidebar.number_input("Starting Age", min_value=40, max_value=80, value=55, step=1)
 
-    premium = st.sidebar.number_input("Enter Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
+    premium = st.sidebar.number_input("Starting Balance", min_value=0.0, value=1000000.0, step=10000.0)
 
-    pr_start = st.sidebar.number_input("Starting FIA Participation Rate (%)", min_value=0.0, max_value=400.0, value=100.0, step=1.0) / 100
-    pr_end = st.sidebar.number_input("Ending FIA Participation Rate (%)", min_value=0.0, max_value=400.0, value=35.0, step=1.0) / 100
+    pr_start = st.sidebar.number_input("Starting FIA PR (%)", min_value=0.0, max_value=400.0, value=100.0, step=1.0) / 100
+    pr_end = st.sidebar.number_input("Ending FIA PR (%)", min_value=0.0, max_value=400.0, value=35.0, step=1.0) / 100
 
     cap_input = st.sidebar.number_input("Cap Rate (%) [0 = randomize]", min_value=0.0, max_value=50.0, value=0.0, step=0.1) / 100
     floor = st.sidebar.number_input("FIA Floor Rate (%)", min_value=0.0, max_value=10.0, value=0.0, step=0.1) / 100
@@ -98,22 +98,22 @@ def run_simulation(index_choice, start_age, premium, pr_start, pr_end, cap_input
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
-        "FIA Start Balance": fia_start,
+        "FIA Balance": fia_start,
         "FIA RMD": fia_rmd,
         "FIA After-Tax RMD": fia_net,
         "FIA Infl-Adj RMD": fia_adj,
-        "401k Start Balance": k401_start,
+        "401k Balance": k401_start,
         "401k RMD": k401_rmd,
         "401k After-Tax RMD": k401_net,
         "401k Infl-Adj RMD": k401_adj,
     })
 
     st.dataframe(df.style.format({
-        "FIA Start Balance": "${:,.0f}",
+        "FIA Balance": "${:,.0f}",
         "FIA RMD": "${:,.0f}",
         "FIA After-Tax RMD": "${:,.0f}",
         "FIA Infl-Adj RMD": "${:,.0f}",
-        "401k Start Balance": "${:,.0f}",
+        "401k Balance": "${:,.0f}",
         "401k RMD": "${:,.0f}",
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
