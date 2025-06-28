@@ -26,6 +26,8 @@ def get_user_inputs(index_names):
     tax = st.sidebar.number_input("Tax Rate on RMDs (%)", min_value=0.0, max_value=50.0, value=30.0, step=1.0) / 100
     return index_choice, ptp_interval, start_age, premium, pr_start, pr_end, cap_input, floor, spread, fee, inflation, tax
 
+selected_indexes = st.sidebar.multiselect("Select Indexes", options=index_names, default=index_names[:2])
+
 # Growth compounding
 def compound_growth(start, returns):
     balances = [start]
