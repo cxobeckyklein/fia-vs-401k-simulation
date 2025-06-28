@@ -96,7 +96,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
         adjusted_return = max(floor, capped_return - spread)
         fia_returns.append(adjusted_return)
     
-    k401_returns = [(1 + r) * (1 - fee) - 1 for r in returns_extended]
+    k401_returns = [max(-1, r - fee) for r in returns_extended]  # Improved net return calc with floor
 
     fia_bal = compound_growth(premium, fia_returns)
     k401_bal = compound_growth(premium, k401_returns)
