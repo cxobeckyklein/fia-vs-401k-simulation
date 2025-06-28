@@ -129,14 +129,12 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
         "401k Infl-Adj RMD": "${:,.0f}"
     }))
     
-    st.dataframe(df.reset_index(drop=True))
-
     df_export = df.copy()
     for col in df_export.columns:
         if "Balance" in col or "RMD" in col:
             df_export[col] = df_export[col].apply(lambda x: f"${x:,.0f}")
 
-    # Remove index column
+    # Remove index column on csv
     df.to_csv("fia_401k_comparison.csv", index=False)
     
     csv = df_export.to_csv(index=False).encode('utf-8')
