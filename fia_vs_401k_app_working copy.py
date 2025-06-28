@@ -83,7 +83,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
 
     # Caps: user-defined or randomized
     if cap_input > 0:
-        caps = [cap_input] * len(ages)
+        cap_val = [cap_input] * len(ages)
     else:
         np.random.seed(42)
         caps = np.random.uniform(0.03, 0.15, size=len(ages))
@@ -92,7 +92,7 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     fia_returns = []
     for pr, r, cap_val in zip(pr_decay, returns_extended, caps):
         raw_return = pr * r
-        capped_return = min(raw_return, caps)
+        capped_return = min(raw_return, cap_val)
         adjusted_return = max(floor, capped_return - spread)
         fia_returns.append(adjusted_return)
     
