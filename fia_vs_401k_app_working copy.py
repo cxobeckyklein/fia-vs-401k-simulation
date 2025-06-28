@@ -104,7 +104,6 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
 
-    st.dataframe(df.reset_index(drop=True))
 
     df = pd.DataFrame({
         "Year": years,
@@ -129,7 +128,8 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
         "401k After-Tax RMD": "${:,.0f}",
         "401k Infl-Adj RMD": "${:,.0f}"
     }))
-
+    
+    st.dataframe(df.reset_index(drop=True))
 
     df_export = df.copy()
     for col in df_export.columns:
