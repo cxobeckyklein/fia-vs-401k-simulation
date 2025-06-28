@@ -104,6 +104,8 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
     fia_start, fia_rmd, fia_net, fia_adj = calculate_rmds(fia_bal, ages, tax_rate, inflation_rate)
     k401_start, k401_rmd, k401_net, k401_adj = calculate_rmds(k401_bal, ages, tax_rate, inflation_rate)
 
+    st.dataframe(df.reset_index(drop=True))
+
     df = pd.DataFrame({
         "Year": years,
         "Age": ages,
@@ -128,12 +130,15 @@ def run_simulation(index_choice, ptp_interval, start_age, premium, pr_start, pr_
         "401k Infl-Adj RMD": "${:,.0f}"
     }))
 
-    # Format export copy
+
     df_export = df.copy()
     for col in df_export.columns:
         if "Balance" in col or "RMD" in col:
             df_export[col] = df_export[col].apply(lambda x: f"${x:,.0f}")
 
+    # Remove index column
+    df.to_csv("fia_401k_comparison.csv", index=False)
+    
     csv = df_export.to_csv(index=False).encode('utf-8')
     st.download_button("Download CSV", csv, f"fia_vs_401k_{index_choice.replace(' ', '_')}.csv", "text/csv")
 
